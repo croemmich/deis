@@ -15,7 +15,7 @@ class Migration(SchemaMigration):
             ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('app', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['api.App'])),
-            ('domain', self.gf('django.db.models.fields.TextField')(unique=True)),
+            ('domain', self.gf('django.db.models.fields.TextField')()),
         ))
         db.send_create_signal(u'api', ['Domain'])
 

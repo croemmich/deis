@@ -32,6 +32,7 @@ REGISTRY_HOST = '{{ getv "/deis/registry/host" }}'
 REGISTRY_PORT = '{{ getv "/deis/registry/port" }}'
 
 # default to sqlite3, but allow postgresql config through envvars
+CONN_MAX_AGE = {{ if exists "/deis/database/connMaxAge" }}{{ getv "/deis/database/connMaxAge" }}{{ else }}60 * 3{{end}}
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.{{ getv "/deis/database/engine" }}',
@@ -40,6 +41,11 @@ DATABASES = {
         'PASSWORD': '{{ getv "/deis/database/password" }}',
         'HOST': '{{ getv "/deis/database/host" }}',
         'PORT': '{{ getv "/deis/database/port" }}',
+        'OPTIONS': {
+            'ssl': {
+                'ca': '/app/mariadb-ca.crt'
+            }
+        }
     }
 }
 

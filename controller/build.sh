@@ -21,7 +21,9 @@ apk add --update-cache \
   openldap-dev \
   postgresql-dev \
   python \
-  python-dev
+  python-dev \
+
+apk add mariadb-libs mariadb-dev --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.3/main/
 
 # install pip
 curl -sSL https://raw.githubusercontent.com/pypa/pip/7.0.3/contrib/get-pip.py | python -
@@ -45,5 +47,7 @@ apk del --purge \
   libffi-dev \
   openldap-dev \
   postgresql-dev \
-  python-dev
+  python-dev \
+  mariadb-dev
+
 rm -rf /var/cache/apk/*

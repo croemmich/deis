@@ -26,7 +26,7 @@ class UuidField(models.CharField):
         if connection and 'postgres' in connection.vendor:
             return 'uuid'
         else:
-            return "char({})".format(self.max_length)
+            return "char({})".format(36)
 
     def pre_save(self, model_instance, add):
         """Initialize an empty field with a new UUID before it is saved."""
@@ -42,7 +42,7 @@ class UuidField(models.CharField):
         """Tell forms how to represent this UuidField."""
         kwargs.update({
             'form_class': forms.CharField,
-            'max_length': self.max_length,
+            'max_length': 36,
         })
         return super(UuidField, self).formfield(**kwargs)
 

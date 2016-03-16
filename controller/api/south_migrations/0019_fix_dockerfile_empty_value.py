@@ -8,7 +8,9 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        orm.Build.objects.filter(dockerfile='False').update(dockerfile='')
+        #don't run, fails with mysql
+        #orm.Build.objects.filter(dockerfile='False').update(dockerfile='')
+        pass
 
     def backwards(self, orm):
         pass

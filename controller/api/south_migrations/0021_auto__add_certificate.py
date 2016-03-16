@@ -16,7 +16,7 @@ class Migration(SchemaMigration):
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('certificate', self.gf('django.db.models.fields.TextField')()),
             ('key', self.gf('django.db.models.fields.TextField')()),
-            ('common_name', self.gf('django.db.models.fields.TextField')(unique=True)),
+            ('common_name', self.gf('django.db.models.fields.TextField')()),
             ('expires', self.gf('django.db.models.fields.DateTimeField')()),
         ))
         db.send_create_signal(u'api', ['Certificate'])
