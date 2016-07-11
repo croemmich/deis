@@ -41,7 +41,7 @@ ships these to the :ref:`logger` component.  By default, the logger writes the
 logs to a distributed Ceph filesystem. These logs can then be fetched by the
 :ref:`controller` component via HTTP.
 
-In a Ceph-less clutser, the Logger component should be configured, instead, to
+In a Ceph-less cluster, the Logger component should be configured, instead, to
 use in-memory log storage.  Optionally, a drain may also be configured to forward
 logs to an external log service (such as Papertrail) for longer-term archival.
 
@@ -56,6 +56,9 @@ previous state.
 
 We will not be using the database component in the Ceph-less cluster, and will
 instead rely on an external database.
+
+When provisioning the database, it is strongly recommended to use an `m3.medium`
+instance or greater.
 
 Registry
 ^^^^^^^^
@@ -119,6 +122,13 @@ S3 store configuration sample:
                                   s3path=/ \
                                   s3encrypt=false \
                                   s3secure=false
+
+Due to `issue 4568`_, you'll also need to run the following to ensure confd will template out the
+registry's configuration:
+
+.. code-block:: console
+
+    $ deisctl config store set gateway=' '
 
 By default, the registry will try to authenticate to S3 using the instance role.
 If your cluster is not running on EC2, you can supply hard coded API access and
@@ -218,5 +228,6 @@ When following the :ref:`upgrading-deis` documentation, be sure to use
 .. _`Amazon RDS`: http://aws.amazon.com/rds/
 .. _`Amazon S3`: http://aws.amazon.com/s3/
 .. _`Arne-Christian Blystad`: https://github.com/blystad
+.. _`issue 4568`: https://github.com/deis/deis/issues/4568
 .. _`Papertrail`: https://papertrailapp.com/
 .. _`Swift3`: https://github.com/openstack/swift3

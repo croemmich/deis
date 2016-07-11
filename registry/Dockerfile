@@ -1,7 +1,7 @@
-FROM alpine:3.1
+FROM alpine:3.3
 
 # install common packages
-RUN apk add --update-cache curl bash sudo && rm -rf /var/cache/apk/*
+RUN apk add --no-cache curl bash sudo
 
 # install etcdctl
 RUN curl -sSL -o /usr/local/bin/etcdctl https://s3-us-west-2.amazonaws.com/get-deis/etcdctl-v0.4.9 \
@@ -25,4 +25,4 @@ RUN DOCKER_BUILD=true /app/build.sh
 
 ADD . /app
 
-ENV DEIS_RELEASE 1.12.3
+ENV DEIS_RELEASE 1.13.2

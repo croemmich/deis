@@ -47,6 +47,7 @@ setting                                      description
 /deis/router/controller/timeout/read         proxy_read_timeout for deis-controller (default: 20m)
 /deis/router/controller/timeout/send         proxy_send_timeout for deis-controller (default: 20m)
 /deis/router/controller/whitelist            comma separated list of IPs (or CIDR) allowed to connect to the controller (default: not set) Example: "0.0.0.0:some_optional_label,10.0.0.0/8"
+/deis/router/enableNginxStatus               enable vhost traffic status page
 /deis/router/enforceHTTPS                    redirect all HTTP traffic to HTTPS (default: false)
 /deis/router/enforceWhitelist                deny all connections unless specifically whitelisted (default: false)
 /deis/router/firewall/enabled                nginx naxsi firewall enabled (default: false)
@@ -78,6 +79,7 @@ setting                                      description
 /deis/router/sslSessionTickets               nginx ssl_session_tickets setting (default: on)
 /deis/router/sslSessionTimeout               nginx ssl_session_timeout setting (default: 10m)
 /deis/router/sslBufferSize                   nginx ssl_buffer_size setting (default: 4k)
+/deis/router/trafficStatusZoneSize           nginx vhost_traffic_status_zone size setting (default: 1m)
 /deis/router/workerProcesses                 nginx number of worker processes to start (default: auto i.e. available CPU cores)
 /deis/router/proxyProtocol                   nginx PROXY protocol enabled
 /deis/router/proxyRealIpCidr                 nginx IP with CIDR used by the load balancer in front of deis-router (default: 10.0.0.0/8)

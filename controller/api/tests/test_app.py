@@ -105,32 +105,30 @@ class AppTest(TestCase):
         url = "/v1/apps/{app_id}/logs".format(**locals())
         response = self.client.get(url, HTTP_AUTHORIZATION="token {}".format(self.token))
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.data, "No logs for {}".format(app_id))
 
         # test logs - 404 from deis-logger
         mock_response.status_code = 404
         response = self.client.get(url, HTTP_AUTHORIZATION="token {}".format(self.token))
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(response.data, "No logs for {}".format(app_id))
 
         # test logs - unanticipated status code from deis-logger
         mock_response.status_code = 400
         response = self.client.get(url, HTTP_AUTHORIZATION="token {}".format(self.token))
         self.assertEqual(response.status_code, 500)
-        self.assertEqual(response.data, "Error accessing logs for {}".format(app_id))
+        self.assertEqual(response.content, "Error accessing logs for {}".format(app_id))
 
         # test logs - success accessing deis-logger
         mock_response.status_code = 200
         mock_response.content = FAKE_LOG_DATA
         response = self.client.get(url, HTTP_AUTHORIZATION="token {}".format(self.token))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, FAKE_LOG_DATA)
+        self.assertEqual(response.content, FAKE_LOG_DATA)
 
         # test logs - HTTP request error while accessing deis-logger
         mock_get.side_effect = requests.exceptions.RequestException('Boom!')
         response = self.client.get(url, HTTP_AUTHORIZATION="token {}".format(self.token))
         self.assertEqual(response.status_code, 500)
-        self.assertEqual(response.data, "Error accessing logs for {}".format(app_id))
+        self.assertEqual(response.content, "Error accessing logs for {}".format(app_id))
 
         # TODO: test run needs an initial build
 
@@ -138,14 +136,23 @@ class AppTest(TestCase):
     def test_app_release_notes_in_logs(self, mock_logger):
         """Verifies that an app's release summary is dumped into the logs."""
         url = '/v1/apps'
-        body = {'id': 'autotest'}
+        app_name = 'autotest'
+        body = {'id': app_name}
+
         response = self.client.post(url, json.dumps(body), content_type='application/json',
                                     HTTP_AUTHORIZATION='token {}'.format(self.token))
         self.assertEqual(response.status_code, 201)
+        app = App.objects.get(id=app_name)
         # check app logs
-        exp_msg = "autotest created initial release"
-        exp_log_call = mock.call(logging.INFO, exp_msg)
-        mock_logger.log.has_calls(exp_log_call)
+        exp_msg = "[{app_name}]: {self.user.username} created initial release".format(**locals())
+        mock_logger.log.assert_called_with(logging.INFO, exp_msg)
+        app.log('hello world')
+        exp_msg = "[{app_name}]: hello world".format(**locals())
+        mock_logger.log.assert_called_with(logging.INFO, exp_msg)
+        app.log('goodbye world', logging.WARNING)
+        # assert logging with a different log level
+        exp_msg = "[{app_name}]: goodbye world".format(**locals())
+        mock_logger.log.assert_called_with(logging.WARNING, exp_msg)
 
     def test_app_errors(self):
         app_id = 'autotest-errors'

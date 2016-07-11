@@ -20,10 +20,18 @@ This script uses PyYAML, a Python library, to do its work.
 
 If you haven't already, install these on your development machine:
 
+For OSX users:
+
 .. code-block:: console
 
     $ brew install python
     $ sudo pip install pyyaml
+
+For Ubuntu users:
+
+.. code-block:: console
+
+    $ sudo apt-get install -y python-yaml
 
 Additionally, we'll also need to install the `Azure CLI`_ from Microsoft.
 
@@ -62,7 +70,8 @@ Generate a new discovery URL for the deployment so the hosts can find each other
     $ ./create-azure-user-data $(curl -s https://discovery.etcd.io/new)
 
 Next, edit ``parameters.json`` to configure the parameters required for the
-cluster. For ``sshKeyData``, use the public key material for the SSH key you'd like
+cluster. For ``publicDomainName``, specify the prefix of domain name (like ``deisNode``).
+For ``sshKeyData``, use the public key material for the SSH key you'd like
 to use to log into the hosts. For ``customData``, you'll need to supply the
 base64-encoded version of ``azure-user-data``. This can be generated using ``base64``:
 

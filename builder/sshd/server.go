@@ -31,19 +31,6 @@ const (
 	ServerConfig string = "ssh.ServerConfig"
 )
 
-// PrereceiveHookTmpl is a pre-receive hook.
-const PrereceiveHookTpl = `#!/bin/bash
-strip_remote_prefix() {
-    stdbuf -i0 -o0 -e0 sed "s/^/"$'\e[1G'"/"
-}
-
-echo "pre-receive hook START"
-set -eo pipefail; while read oldrev newrev refname; do
-[[ $refname = "refs/heads/master" ]] && git archive $newrev | {{.Receiver}} "$RECEIVE_REPO" "$newrev" | strip_remote_prefix
-done
-echo "pre-receive hook END"
-`
-
 // Serve starts a native SSH server.
 //
 // The general design of the server is that it acts as a main server for
@@ -134,7 +121,7 @@ func (s *server) handleConn(conn net.Conn, conf *ssh.ServerConfig) {
 	_, chans, reqs, err := ssh.NewServerConn(conn, conf)
 	if err != nil {
 		// Handshake failure.
-		log.Errf(s.c, "Failed handshake: %s (%v)", err, conn)
+		log.Debugf(s.c, "Failed handshake: %s", err)
 		return
 	}
 
@@ -199,7 +186,7 @@ func (s *server) answer(channel ssh.Channel, requests <-chan *ssh.Request, sshCo
 		case "env":
 			o := &EnvVar{}
 			ssh.Unmarshal(req.Payload, o)
-			fmt.Printf("Key='%s', Value='%s'\n", o.Name, o.Value)
+			log.Debugf(s.c, "Key='%s', Value='%s'\n", o.Name, o.Value)
 			req.Reply(true, nil)
 		case "exec":
 			clean := cleanExec(req.Payload)

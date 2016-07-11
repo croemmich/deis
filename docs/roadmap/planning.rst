@@ -30,12 +30,96 @@ Major decisions affecting the Roadmap are discussed during Release Planning Meet
 Release Planning Meetings are open to the public with access coordinated via the #deis IRC channel on Freenode.
 Notes from past meetings are below, along with links to a recording of the entire meeting on YouTube.
 
-November 2015 (Deis v1.13)
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+July 2016
+~~~~~~~~~
 
-The public release planning meeting for Deis v1.13 will take place on
-**Thursday, November 5th** at **12pm MDT/1900 GMT**. The `event`_ can be added
+The next public release planning meeting for Deis will take place on
+**Thursday, July 7nd** at **12pm MDT/1900 UTC**. The `event`_ can be added
 directly to your calendar.
+
+June 2016
+~~~~~~~~~
+
+- Introduction & Community Updates - Gabe Monroy
+- Helm Alpha 1 Demo - Michelle Noorali
+- How Mozilla uses Deis v1 - Josh Mize
+- Deis V1 Maintenance Update - Matt Boersma
+- Deis Workflow Release Update - Jason Hansen
+
+Archive: https://youtu.be/MtGSwsRnpcM
+
+May 2016
+~~~~~~~~
+
+- Introduction & Community Updates
+- LTS Update
+- Beta 3 Release and Beta 4 Status
+- Helm Update, Helm Classic and Kubernetes Helm
+- Wrap-up!
+
+Archive: https://www.youtube.com/watch?v=Jb-X_yVE2-w
+
+April 2016 (Deis LTS Release)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Intro
+- Move to Slack https://slack.deis.io
+- Notes on Deis Workflow Beta
+- Road to Workflow Stable
+- Deis Workflow e2e Testing and Improvements
+- LTS Release (v1.13.0) for Deis v1
+- Call for Community Demos!
+
+Archive: https://www.youtube.com/watch?v=72g9PxiR0iU
+
+March 2016 (Deis v2 Beta)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We demoed Deis v2 beta and shared the architecture of the Deis v2 CI/CD pipeline.
+
+Archive: https://www.youtube.com/watch?v=rIF3v1MZkJg
+
+February 2016
+~~~~~~~~~~~~~
+
+There was no public release planning meeting for February.
+
+January 2016 (Deis 1.x LTS release and Deis v2 Alpha)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We're still taking feedback and suggestions on what our users would like to
+see in the 1.x LTS release. Feel free to provide your input on the
+`LTS release issue`_ on GitHub.
+
+Over the last month we've been hard at work on Deis v2 which puts the Deis
+workflow people have come to know and love on top of the `Kubernetes`_ platform.
+Aaron demoed what we've done so far with the release of Deis v2 Alpha.
+(`v2 alpha walkthrough cheatsheet`_)
+
+If you've tried out v2 alpha, let us know what you think via the
+`v2 alpha feedback`_ GitHub issue!
+
+You can also take a look at our `v2 beta milestone`_ goals and chime in there.
+
+Archive: https://www.youtube.com/watch?v=8LNVluUFh1M
+
+December 2015 (Deis 1.x LTS release)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+While much of our engineering efforts have shifted to complete Deis v2,
+we plan to ship one final release of the 1.x branch. This release will be
+a long-term support (LTS) release, receiving bug fixes and security updates
+for the foreseeable future.
+
+We invite our community to help us plan this release, and look forward to your
+comments in the `LTS release issue`_ on GitHub.
+
+Archive: https://www.youtube.com/watch?v=U70FOwJuIH4
+
+November 2015 (Deis v1.12.2)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No archive due to technical difficulties.
 
 October 2015 (Deis v1.12)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,5 +170,10 @@ Thanks to `Amy Lindburg`_ and our friends at `Docker`_ for their inspiration.
 
 .. _`Amy Lindburg`: https://twitter.com/amylindburg
 .. _`Docker`: https://www.docker.com/
-.. _`event`: https://goo.gl/q27Jyh
+.. _`event`: https://goo.gl/82ToK7
+.. _`LTS release issue`: https://github.com/deis/deis/issues/4776
 .. _`Maintainers`: https://github.com/deis/deis/blob/master/MAINTAINERS.md
+.. _`Kubernetes`: http://kubernetes.io/
+.. _`v2 alpha feedback`: https://github.com/deis/deis/issues/4827
+.. _`v2 alpha walkthrough cheatsheet`: https://gist.github.com/arschles/5b7a75a50938913d3eb1
+.. _`v2 beta milestone`: https://github.com/deis/deis/issues/4809

@@ -45,7 +45,7 @@ class FleetHTTPClient(AbstractSchedulerClient):
     def _request_unit(self, method, name, body=None):
         headers = {'Content-Type': 'application/json'}
         self.conn.request(method, '/v1-alpha/units/{name}.service'.format(**locals()),
-                                  headers=headers, body=json.dumps(body))
+                          headers=headers, body=json.dumps(body))
         return self.conn.getresponse()
 
     def _get_unit(self, name):
@@ -150,10 +150,13 @@ class FleetHTTPClient(AbstractSchedulerClient):
             f['value'] = f['value'].format(**l)
         # prepare tags only if one was provided
         tags = kwargs.get('tags', {})
-        tagset = ' '.join(['"{}={}"'.format(k, v) for k, v in tags.viewitems()])
+        unit_tags = tags.viewitems()
         if settings.ENABLE_PLACEMENT_OPTIONS in ['true', 'True', 'TRUE', '1']:
+            tags['dataPlane'] = 'true'
+        if unit_tags:
+            tagset = ' '.join(['"{}={}"'.format(k, v) for k, v in unit_tags])
             unit.append({"section": "X-Fleet", "name": "MachineMetadata",
-                         "value": tagset + ' "dataPlane=true"'})
+                         "value": tagset})
         # don't schedule on same node as other instances
         if not entrypoint:
             strip = len('.' + l['c_num'])

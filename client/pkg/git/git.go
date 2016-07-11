@@ -93,6 +93,9 @@ func findRemote(host string) (string, error) {
 
 	cmd := string(out)
 
+	// Strip off any trailing :port number after the host name.
+	host = strings.Split(host, ":")[0]
+
 	for _, line := range strings.Split(cmd, "\n") {
 		for _, remote := range strings.Split(line, " ") {
 			if strings.Contains(remote, host) {
@@ -106,5 +109,7 @@ func findRemote(host string) (string, error) {
 
 // RemoteURL returns the git URL of app.
 func RemoteURL(host, appID string) string {
+	// Strip off any trailing :port number after the host name.
+	host = strings.Split(host, ":")[0]
 	return fmt.Sprintf("ssh://git@%s:2222/%s.git", host, appID)
 }

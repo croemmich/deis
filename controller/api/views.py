@@ -1,22 +1,39 @@
 """
 RESTful view classes for presenting Deis API objects.
 """
+
+import os.path
+import tempfile
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import assign_perm, get_objects_for_user, \
     get_users_with_perms, remove_perm
+from django.views.generic import View
 from rest_framework import mixins, renderers, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.authtoken.models import Token
+from simpleflock import SimpleFlock
 
 from api import authentication, models, permissions, serializers, viewsets
 
 import requests
+
+
+class HealthCheckView(View):
+    """Simple health check view to determine if the server
+       is responding to HTTP requests.
+    """
+
+    def get(self, request):
+        return HttpResponse("OK")
+    head = get
 
 
 class UserRegistrationViewSet(GenericViewSet,
@@ -46,6 +63,11 @@ class UserManagementViewSet(GenericViewSet):
                 target_obj = get_object_or_404(User, username=request.data['username'])
             else:
                 raise PermissionDenied()
+
+        # A user can not be removed without apps changing ownership first
+        if len(models.App.objects.filter(owner=target_obj)) > 0:
+            msg = '{} still has applications assigned. Delete or transfer ownership'.format(str(target_obj))  # noqa
+            return Response({'detail': msg}, status=status.HTTP_409_CONFLICT)
 
         target_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -207,22 +229,20 @@ class AppViewSet(BaseDeisViewSet):
     def logs(self, request, **kwargs):
         app = self.get_object()
         try:
-            return Response(app.logs(request.query_params.get('log_lines',
-                                     str(settings.LOG_LINES))),
-                            status=status.HTTP_200_OK, content_type='text/plain')
+            return HttpResponse(app.logs(request.query_params.get('log_lines',
+                                         str(settings.LOG_LINES))),
+                                status=status.HTTP_200_OK, content_type='text/plain')
         except requests.exceptions.RequestException:
-            return Response("Error accessing logs for {}".format(app.id),
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            content_type='text/plain')
-        except EnvironmentError as e:
-            if e.message == 'Error accessing deis-logger':
-                return Response("Error accessing logs for {}".format(app.id),
+            return HttpResponse("Error accessing logs for {}".format(app.id),
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 content_type='text/plain')
+        except EnvironmentError as e:
+            if e.message == 'Error accessing deis-logger':
+                return HttpResponse("Error accessing logs for {}".format(app.id),
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                    content_type='text/plain')
             else:
-                return Response("No logs for {}".format(app.id),
-                                status=status.HTTP_204_NO_CONTENT,
-                                content_type='text/plain')
+                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
     def run(self, request, **kwargs):
         app = self.get_object()
@@ -261,6 +281,18 @@ class ConfigViewSet(ReleasableViewSet):
     """A viewset for interacting with Config objects."""
     model = models.Config
     serializer_class = serializers.ConfigSerializer
+
+    def create(self, request, **kwargs):
+        # Guard against overlapping config changes, using a filesystem lock so that
+        # multiple controller processes can be coordinated.
+        # Use a tempfile such as "/tmp/violet-valkyrie-config".
+        lockfile = os.path.join(tempfile.gettempdir(), kwargs['id'] + '-config')
+        try:
+            with SimpleFlock(lockfile, timeout=5):
+                return super(ConfigViewSet, self).create(request, **kwargs)
+        except IOError as err:
+            msg = "Config changes already in progress.\n{}".format(err)
+            return Response(status=status.HTTP_409_CONFLICT, data={'error': msg})
 
     def post_save(self, config):
         release = config.app.release_set.latest()

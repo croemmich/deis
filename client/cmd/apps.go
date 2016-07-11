@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -142,15 +141,12 @@ func AppOpen(appID string) error {
 		return err
 	}
 
-	u, err := url.Parse(app.URL)
-
-	if err != nil {
-		return err
+	u := app.URL
+	if !(strings.HasPrefix(u, "http://") || strings.HasPrefix(u, "https://")) {
+		u = "http://" + u
 	}
 
-	u.Scheme = "http"
-
-	return webbrowser.Webbrowser(u.String())
+	return webbrowser.Webbrowser(u)
 }
 
 // AppLogs returns the logs from an app.
@@ -172,7 +168,7 @@ func AppLogs(appID string, lines int) error {
 
 // printLogs prints each log line with a color matched to its category.
 func printLogs(logs string) error {
-	for _, log := range strings.Split(strings.Trim(logs, `\n`), `\n`) {
+	for _, log := range strings.Split(logs, "\n") {
 		category := "unknown"
 		parts := strings.Split(strings.Split(log, ": ")[0], " ")
 		if len(parts) >= 2 {

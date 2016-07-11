@@ -11,22 +11,20 @@ if [[ -z $DOCKER_BUILD ]]; then
 fi
 
 # install required system packages
-# HACK: install git so we can install bacongobbler's fork of django-fsm
-apk add --update-cache \
+apk add --no-cache \
   build-base \
-  git \
   libffi-dev \
   libpq \
   openldap \
   openldap-dev \
   postgresql-dev \
   python \
-  python-dev \
+  python-dev
 
 apk add mariadb-libs mariadb-dev --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.3/main/
 
 # install pip
-curl -sSL https://raw.githubusercontent.com/pypa/pip/7.0.3/contrib/get-pip.py | python -
+curl -sSL https://bootstrap.pypa.io/get-pip.py | python - pip==8.1.1
 
 # add a deis user
 adduser deis -D -h /app -s /bin/bash
@@ -41,13 +39,10 @@ mkdir -p /templates && chown -R deis:deis /templates
 pip install --disable-pip-version-check --no-cache-dir -r /app/requirements.txt
 
 # cleanup.
-apk del --purge \
+apk del --no-cache \
   build-base \
-  git \
   libffi-dev \
   openldap-dev \
   postgresql-dev \
   python-dev \
   mariadb-dev
-
-rm -rf /var/cache/apk/*

@@ -55,8 +55,8 @@ class DockerClient(object):
     def build(self, source, config, repo, tag):
         """Add a "last-mile" layer of environment config to a Docker image for deis-registry."""
         check_blacklist(repo)
-        env = ' '.join("{}='{}'".format(
-            k, str(v).encode('unicode-escape').replace("'", "\\'")) for k, v in config.viewitems())
+        env = ' '.join('{}="{}"'.format(
+            k, v.encode('unicode-escape').replace('"', '\\"')) for k, v in config.viewitems())
         dockerfile = "FROM {}\nENV {}".format(source, env)
         f = io.BytesIO(dockerfile.encode('utf-8'))
         target_repo = "{}/{}:{}".format(self.registry, repo, tag)
@@ -92,8 +92,7 @@ def check_blacklist(repo):
     blacklisted = [  # NOTE: keep this list up to date!
         'builder', 'cache', 'controller', 'database', 'logger', 'logspout',
         'publisher', 'registry', 'router', 'store-admin', 'store-daemon',
-        'store-gateway', 'store-metadata', 'store-monitor', 'swarm', 'mesos-master',
-        'mesos-marathon', 'mesos-slave', 'zookeeper',
+        'store-gateway', 'store-metadata', 'store-monitor',
     ]
     if any("deis/{}".format(c) in repo for c in blacklisted):
         raise PermissionDenied("Repository name {} is not allowed".format(repo))

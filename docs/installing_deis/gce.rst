@@ -118,7 +118,7 @@ Launch 3 instances. You can choose another starting CoreOS image from the listin
       --metadata-from-file user-data=gce-user-data,sshKeys=$HOME/.ssh/deis.pub \
       --disk name=cored${num},device-name=coredocker \
       --tags deis \
-      --image coreos-stable-835-12-0-v20160202 \
+      --image coreos-stable-899-17-0-v20160504 \
       --image-project coreos-cloud;
     done
 
@@ -191,7 +191,7 @@ Now edit the zone to add the Deis endpoint and wildcard DNS:
 
 .. code-block:: console
 
-    $ gcloud dns record-sets --zone deisdemoio transaction start
+    $ gcloud dns record-sets transaction start --zone deisdemoio
 
 This exports a `transaction.yaml` file.
 
@@ -232,7 +232,7 @@ You will want to add two records as YAML objects. Here is an example edit for th
       ttl: 21600
       type: A
     - kind: dns#resourceRecordSet
-      name: *.dev.deisdemo.io.
+      name: "*.dev.deisdemo.io."
       rrdatas:
       - 23.251.153.6
       ttl: 21600
@@ -249,7 +249,7 @@ And finally execute the transaction.
 
 .. code-block:: console
 
-    $ gcloud dns record-sets --zone deisdemoio transaction execute
+    $ gcloud dns record-sets transaction execute --zone deisdemoio
 
 
 Install Deis Platform

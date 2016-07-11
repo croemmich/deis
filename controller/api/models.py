@@ -116,6 +116,11 @@ def validate_certificate(value):
         raise ValidationError('Could not load certificate: {}'.format(e))
 
 
+def validate_common_name(value):
+    if '*' in value:
+        raise ValidationError('Wildcard certificates are not supported')
+
+
 def get_etcd_client():
     if not hasattr(get_etcd_client, "client"):
         # wire up etcd publishing if we can connect
@@ -445,7 +450,8 @@ class App(UuidAuditedModel):
         destroy_threads = [Thread(target=c.destroy) for c in to_destroy]
         [t.start() for t in destroy_threads]
         [t.join() for t in destroy_threads]
-        [c.delete() for c in to_destroy if c.state == 'destroyed']
+        pks = [c.pk for c in to_destroy if c.state == 'destroyed']
+        Container.objects.filter(pk__in=pks).delete()
         if any(c.state != 'destroyed' for c in to_destroy):
             err = 'aborting, failed to destroy some containers'
             log_event(self, err, logging.ERROR)
@@ -1011,7 +1017,7 @@ class Certificate(AuditedModel):
     certificate = models.TextField(validators=[validate_certificate])
     key = models.TextField()
     # X.509 certificates allow any string of information as the common name.
-    common_name = models.TextField(unique=True)
+    common_name = models.TextField(unique=True, validators=[validate_common_name])
     expires = models.DateTimeField()
 
     def __str__(self):
