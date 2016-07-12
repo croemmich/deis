@@ -1,8 +1,14 @@
 #cloud-config
 hostname: $hostname
 coreos:
+  etcd2:
+    heartbeat-interval: 600
+    election-timeout: 6000
   fleet:
     metadata: name=%H,controlPlane=true,dataPlane=true,routerMesh=true
+    engine-reconcile-interval: 10
+    etcd-request-timeout: 5
+    agent-ttl: 120s
   units:
   - name: 00-eth0.network
     runtime: true
