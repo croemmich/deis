@@ -21,8 +21,6 @@ apk add --no-cache \
   python \
   python-dev
 
-apk add mariadb-libs mariadb-dev --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.3/main/
-
 # install pip
 curl -sSL https://bootstrap.pypa.io/get-pip.py | python - pip==8.1.1
 
@@ -34,6 +32,10 @@ mkdir -p /app && chown -R deis:deis /app
 
 # create directory for confd templates
 mkdir -p /templates && chown -R deis:deis /templates
+
+# add mariadb - do this after `adduser deis` to ensure deis user gets uid=1000
+apk add --no-cache \
+  mariadb-libs mariadb-dev
 
 # install dependencies
 pip install --disable-pip-version-check --no-cache-dir -r /app/requirements.txt
