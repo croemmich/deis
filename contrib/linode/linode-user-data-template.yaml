@@ -18,6 +18,7 @@ coreos:
       DNS=72.14.179.5
       DNS=8.8.8.8
       DNS=208.67.222.222
+      Domains=linode-dallas.dns.myriadmobile.com myriadmobile.com
 
       [DHCP]
       UseDNS=false
@@ -32,20 +33,8 @@ coreos:
       [Service]
       Type=oneshot
       ExecStart=/bin/sh -c "sysctl -w net.ipv6.conf.all.disable_ipv6=1"
-    # use ntpd rather than timesyncd. timesyncd was not keeping the nodes close enough to keep ceph happy
-  - name: systemd-timesyncd.service
-    command: stop
-    mask: true
-  - name: ntpd.service
-    command: start
-    enable: true
 write_files:
   - path: /etc/environment
     content: |
       COREOS_PUBLIC_IPV4=$public_ipv4
       COREOS_PRIVATE_IPV4=$private_ipv4
-  - path: /etc/systemd/system/ntpd.service.d/debug.conf
-    content: |
-      [Service]
-      ExecStart=
-      ExecStart=/usr/sbin/ntpd -g -n -f /var/lib/ntp/ntp.drift
