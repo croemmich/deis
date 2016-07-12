@@ -27,16 +27,15 @@ REGISTRY_PORT = '{{ getv "/deis/registry/port" }}'
 CONN_MAX_AGE = {{ if exists "/deis/database/connMaxAge" }}{{ getv "/deis/database/connMaxAge" }}{{ else }}60 * 3{{end}}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.{{ getv "/deis/database/engine" }}',
+        'ENGINE': 'mysql.connector.django',
         'NAME': '{{ getv "/deis/database/name" }}',
         'USER': '{{ getv "/deis/database/user" }}',
         'PASSWORD': '{{ getv "/deis/database/password" }}',
         'HOST': '{{ getv "/deis/database/host" }}',
         'PORT': '{{ getv "/deis/database/port" }}',
         'OPTIONS': {
-            'ssl': {
-                'ca': '/app/mariadb-ca.crt'
-            }
+            'autocommit': True,
+            'ssl_ca': '/app/mariadb-ca.crt'
         }
     }
 }
